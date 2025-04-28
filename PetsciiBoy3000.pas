@@ -67,7 +67,8 @@ const
   INPUT_JOYSTICK = 0;
   INPUT_LIGHTPEN = 1;
 
-
+  // Histogram levels are rendered using PETSCII chars, but some are available only in reversed mode
+  // hence array values are not single chars, they're screen codes sequences
   ACTIVATION_HISTOGRAM_LEVELS: array [0..8] of string[3] = (
     ' '#0#0,
     #164#0#0,
@@ -114,7 +115,7 @@ var
   
   batch : TBatch;
   currInput: TInput;
-  batchIndexes: array[0..15] of byte = (15, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0);
+  batchIndexes: array[0..15] of byte = (15, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0); // Batches "indexes", this array in going to be shuffled before an epoch starts
   batchIdx: byte;
   batchName: TString;
   correct: word;
@@ -517,20 +518,23 @@ procedure DisplayChar(digit: byte);
 *) 
 begin
   ClearScreenArea(1, 1, 16, 16);
-  CIACRA := CIACRA AND $FE;
-  R6510 := R6510 AND $FB;
+  CIACRA := CIACRA AND $FE; // Disable interrupt
+  R6510 := R6510 AND $FB; // Enable Charset rom
+  // Now read digit char bytes
   for row := 0 to 7 do
-    chardata[row] := Peek($D000 + (48 + digit)*8 + row);
-  R6510 := R6510 OR $04;
-  CIACRA := CIACRA OR $01;
+    chardata[row] := Peek($D000 + (48 + digit) * 8 + row);
+  R6510 := R6510 OR $04;  // Disable charset rom
+  CIACRA := CIACRA OR $01; // Re-enable interrupt
+  
+  // Character data is  
   for row := 0 to 7 do
     for bit := 0 to 7 do
-      if chardata[row] AND (1 shl (7-bit)) > 0 then
+      if chardata[row] AND (1 shl (7 - bit)) > 0 then
       begin
-        screenRam[(CANVAS_Y + row*2)*40 + (CANVAS_X + bit*2)] := CANVAS_PIXEL_ON;
-        screenRam[(CANVAS_Y + (row*2)+1)*40 + (CANVAS_X + bit*2)] := CANVAS_PIXEL_ON;
-        screenRam[(CANVAS_Y + row*2)*40 + (CANVAS_X + (bit*2)+1)] := CANVAS_PIXEL_ON;
-        screenRam[(CANVAS_Y + (row*2)+1)*40 + (CANVAS_X + (bit*2)+1)] := CANVAS_PIXEL_ON;
+        screenRam[(CANVAS_Y + row * 2) * 40 + (CANVAS_X + bit * 2)] := CANVAS_PIXEL_ON;
+        screenRam[(CANVAS_Y + (row * 2) + 1) * 40 + (CANVAS_X + bit * 2)] := CANVAS_PIXEL_ON;
+        screenRam[(CANVAS_Y + row * 2) * 40 + (CANVAS_X + (bit * 2) + 1)] := CANVAS_PIXEL_ON;
+        screenRam[(CANVAS_Y + (row * 2) + 1) * 40 + (CANVAS_X + (bit*2)+1)] := CANVAS_PIXEL_ON;
       end;
 end;
 
@@ -541,7 +545,7 @@ procedure DrawAndPredict();
 *)
 var
   c, guessedDigit: byte;
-  done: boolean;
+  done, isNumber: boolean;
 begin
   done := false; // Local variables values apparently are kept between calls, so here is an explicit assignment
   ClearScreenArea(1, 1, 16, 16);
@@ -583,6 +587,17 @@ begin
   DrawOutputActivations();
   DisplayChar(guessedDigit);
   Log(strCat('I think you wrote a ', ByteToStr(guessedDigit)));
+  if not Confirm('Am I right? (Y/N)') then
+  begin
+    repeat
+    Log('Enter the correct digit:');
+    repeat until KeyPressed;
+    guessedDigit := StrToInt(ReadKey());
+    isNumber := (guessedDigit > 0) AND (guessedDigit < 9);
+    until isNumber;
+  end;
+  Log('Adjusting weights...');
+  Train(currInput, guessedDigit);
 end;
 
 procedure TrainLoop(epochs: byte);
