@@ -14,9 +14,9 @@ The core functions (train and predict) are translated from https://github.com/dl
 
 ## Requirements
 
-No particular or exotic hardware is needed. A floppy disk drive and a joystick is enough, if you want to write a digit more freely you can use a light pen.
+No particular hardware is needed. A floppy disk drive and a joystick is enough, if you want to write a digit more freely you can use a light pen.
 
-No REU, no SuperCpu, just a stock C64, like the Good Old Days<sup>TM</sup>.
+No REU, no SuperCpu, just a stock C64.
 
 ## Why Pascal?
 
