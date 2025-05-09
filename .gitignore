@@ -1,7 +1,8 @@
 bak
 denise_states
 pasNeural.code-workspace
-.vscode/tasks.json
-PetsciiBoy3000.a65
-PetsciiBoy3000.lst
-PetsciiBoy3000.txt
+.vscode/*
+pascal/PetsciiBoy3000.a65
+pascal/PetsciiBoy3000.lst
+pascal/PetsciiBoy3000.txt
+PETSCII-Boy-3000.code-workspace
