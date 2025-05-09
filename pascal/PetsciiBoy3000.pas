@@ -42,8 +42,8 @@ uses
   kernal,
   neuralnet,
   joystick in 'units\joystick.pas',
-  mouse1531 in 'units\mouse1531.pas',
-  lightpen in 'units\lightpen.pas';
+  mouse1531,
+  lightpen;
 
 type
   TSprite = array[0..63] of byte;
@@ -120,7 +120,7 @@ var
   batchName: TString;
   correct: word;
   predicted : byte;
-  cursorSpriteData: array of byte = [{$bin2csv cursor_sprite.bin}];
+  cursorSpriteData: array of byte = [{$bin2csv ../cursor_sprite.bin}];
   cursorSprite: TSprite absolute $0380;
   digitSprite: TSprite absolute $0340;
   cursorX, cursorY: byte;
