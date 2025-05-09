@@ -12,6 +12,12 @@ It also tries to be as clear and as straightforward as possible in order to be u
 
 The core functions (train and predict) are translated from https://github.com/dlidstrom/NeuralNetworkInAllLangs C# implementation, while some utility units are inspired from the https://github.com/KarolS/millfork counterpart.
 
+## Requirements
+
+No particular hardware is needed. A floppy disk drive and a joystick is enough, if you want to write a digit more freely you can use a light pen.
+
+No REU, no SuperCpu, just a stock C64.
+
 ## Why Pascal?
 
 The first development iteration was meant to obtain a working predict function with common data structures, hence using floating point math was mandatory at that stage. A prototype was first written in BASIC, but due to its slowness it was soon ditched.
