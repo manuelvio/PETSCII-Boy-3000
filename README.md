@@ -24,6 +24,8 @@ The first development iteration was meant to obtain a working predict function w
 
 Turns out that there aren't many other Commodore 64 compatible languages out there with native floating point support, except for https://github.com/tebe6502/Mad-Pascal.
 
+NOTE: there's a new version of this project, rewritten from scratch in C (Oscar64), [here](https://github.com/manuelvio/PETSCII-Boy-3000-Mark-II).
+
 ## Training data
 
 The dataset used for training is a compressed version of the one available at https://archive.ics.uci.edu/dataset/178/semeion+handwritten+digit. The original file structure contained 1593 rows of 256 + 10 values: each row represented a handwritten digit in a 16x16 pixel matrix, where every pixel could be either on or off. In the dataset the two states were written as a 1.0 or a 0.0 respectively.
